@@ -35,6 +35,6 @@ export const main = processRequests((event) =>
       )
     ),
     // simulate load...
-    T.delay(1000)
+    T.delay(50)
   )
 );
