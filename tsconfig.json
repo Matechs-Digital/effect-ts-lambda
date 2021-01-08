@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "strict": true,
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "plugins": [
+      {
+        "transform": "@effect-ts/tracing-plugin",
+        "moduleMap": {
+          "^src/(.*)": "(@app): src/$1"
+        }
+      }
+    ]
+  },
+  "include": ["src/**/*.ts"]
+}
