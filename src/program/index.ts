@@ -17,7 +17,7 @@ export const main = processRequests((event) =>
     T.chain((token) =>
       T.effectTotal(
         (): APIGatewayProxyResult => {
-          if (event.body && JSON.parse(event.body).op === "fail") {
+          if (event.body && event.body === "fail") {
             throw new Error("simulate defect error");
           }
           if (token === "service_token") {

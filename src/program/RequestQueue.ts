@@ -5,7 +5,6 @@ import * as P from "@effect-ts/core/Effect/Promise";
 import type * as Q from "@effect-ts/core/Effect/Queue";
 import { literal, pipe } from "@effect-ts/core/Function";
 import { tag } from "@effect-ts/core/Has";
-import { Cause } from "@effect-ts/system/Cause";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 /**

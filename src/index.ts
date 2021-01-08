@@ -1,7 +1,5 @@
 import "./init";
 
-import * as U from "@effect-ts/tracing-utils";
-
 import * as T from "@effect-ts/core/Effect";
 import * as P from "@effect-ts/core/Effect/Promise";
 import * as Q from "@effect-ts/core/Effect/Queue";
@@ -13,7 +11,7 @@ import { main } from "./program";
 import { LiveAuth } from "./program/Auth";
 import type { RequestContext } from "./program/RequestQueue";
 import { GlobalRequestQueue } from "./program/RequestQueue";
-import { Cause, pretty } from "@effect-ts/system/Cause";
+import { pretty } from "@effect-ts/system/Cause";
 
 /**
  * Given the lambda handler is global we need to store the queue in a global variable
@@ -30,8 +28,6 @@ pipe(
   // we run the main process, this will listen to process.on(exit) and interrupt correctly
   R.runMain
 );
-
-console.log(U.isTracingEnabled());
 
 /**
  * The main exposed handler
