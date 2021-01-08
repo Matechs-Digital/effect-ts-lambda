@@ -1,11 +1,8 @@
 import * as T from "@effect-ts/core/Effect";
-import * as L from "@effect-ts/core/Effect/Layer";
-import * as M from "@effect-ts/core/Effect/Managed";
 import * as P from "@effect-ts/core/Effect/Promise";
-import * as R from "@effect-ts/node/Runtime";
 import * as Q from "@effect-ts/core/Effect/Queue";
-import { literal, pipe } from "@effect-ts/core/Function";
-import { tag } from "@effect-ts/core/Has";
+import { pipe } from "@effect-ts/core/Function";
+import * as R from "@effect-ts/node/Runtime";
 import { pretty } from "@effect-ts/system/Cause";
 
 /**
