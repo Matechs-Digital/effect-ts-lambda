@@ -4,7 +4,10 @@ import * as T from "@effect-ts/core/Effect";
 import { pipe } from "@effect-ts/core/Function";
 import * as R from "@effect-ts/node/Runtime";
 import { LiveAuth } from "./utils/Auth";
-import { handler, main } from "./program";
+import { program } from "./program";
+import { lambda } from "./utils/Lambda";
+
+const { handler, main } = lambda(program);
 
 /**
  * As soon as the file loads we run the main process

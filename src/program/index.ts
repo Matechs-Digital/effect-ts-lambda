@@ -5,8 +5,8 @@ import { lambda } from "../utils/Lambda";
 
 export type Event = { _tag: "fail" } | { _tag: "login"; token: string };
 
-export const { handler, main } = lambda((event: Event) =>
-  pipe(
+export function program(event: Event) {
+  return pipe(
     login,
     T.chain((token) =>
       T.effectTotal(() => {
@@ -23,5 +23,5 @@ export const { handler, main } = lambda((event: Event) =>
         };
       })
     )
-  )
-);
+  );
+}
