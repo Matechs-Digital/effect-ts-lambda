@@ -1,4 +1,4 @@
-import "./init";
+import "./utils/init";
 
 import * as T from "@effect-ts/core/Effect";
 import { pipe } from "@effect-ts/core/Function";
