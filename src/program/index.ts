@@ -1,15 +1,14 @@
-import * as T from "@effect-ts/core/Effect";
+import { Effect } from "@effect-ts/core";
 import { pipe } from "@effect-ts/core/Function";
 import { login } from "../utils/Auth";
-import { lambda } from "../utils/Lambda";
 
 export type Event = { _tag: "fail" } | { _tag: "login"; token: string };
 
 export function program(event: Event) {
   return pipe(
     login,
-    T.chain((token) =>
-      T.effectTotal(() => {
+    Effect.chain((token) =>
+      Effect.succeedWith(() => {
         if (event._tag === "fail") {
           throw new Error("simulate defect exception");
         }
