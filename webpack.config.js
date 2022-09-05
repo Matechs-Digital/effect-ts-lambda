@@ -10,11 +10,6 @@ module.exports = {
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
-        alias: {
-            "@effect-ts/core": ["@effect-ts/core/_traced"],
-            "@effect-ts/node": ["@effect-ts/node/_traced"],
-            "@effect-ts/system": ["@effect-ts/system/_traced"],
-        }
     },
     module: {
         rules: [

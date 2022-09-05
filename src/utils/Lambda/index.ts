@@ -1,51 +1,56 @@
-import * as T from "@effect-ts/core/Effect";
-import * as P from "@effect-ts/core/Effect/Promise";
-import * as Q from "@effect-ts/core/Effect/Queue";
-import { pipe } from "@effect-ts/core/Function";
-import * as R from "@effect-ts/node/Runtime";
-import { pretty } from "@effect-ts/system/Cause";
+import { Cause, Effect, Promise, Queue } from '@effect-ts/core';
+import { pipe } from '@effect-ts/core/Function';
+import * as Runtime from '@effect-ts/node/Runtime';
+
+/**
+ * The context of a request
+ */
+type RequestContext<I, O, E> = {
+  readonly event: I;
+  readonly res: Promise.Promise<E, O>;
+};
 
 /**
  * Create a lambda environment
  */
-export function lambda<R, I, O>(f: (a: I) => T.RIO<R, O>) {
-  /**
-   * The context of a request
-   */
-  type RequestContext<I, O> = {
-    readonly event: I;
-    readonly res: P.Promise<never, O>;
-  };
-
+export function lambda<R, I, E, O>(f: (a: I) => Effect.Effect<R, E, O>) {
   /**
    * Given the lambda handler is global we need to store the queue in a global variable
    */
-  const requestQueue = Q.unsafeMakeUnbounded<RequestContext<I, O>>();
+  const requestQueue = Queue.unsafeMakeUnbounded<RequestContext<I, O, E>>();
 
   /**
    * Returns an effect that will poll indefinately the request queue
    * forking each process in a new child fiber
    */
-  const main = T.accessM((env: R) =>
+  const main = Effect.accessM((env: R) =>
     pipe(
+      requestQueue,
       // poll from the request queue waiting in case no requests are present
-      requestQueue.take,
+      Queue.take,
       // fork each request in it's own fiber and start processing
       // here we are forking inside the parent scope so in case the
       // parent is interrupted each of the child will also trigger
       // interruption
-      T.chain((r) => T.fork(P.complete(T.provideAll(env)(f(r.event)))(r.res))),
+      Effect.chain((r) =>
+        Effect.fork(
+          Promise.complete(Effect.provideAll(env)(f(r.event)))(r.res),
+        ),
+      ),
       // loop forever
-      T.forever,
+      Effect.forever,
       // handle teardown
-      T.ensuring(
+      Effect.ensuring(
         pipe(
-          requestQueue.takeAll,
-          T.tap(() => requestQueue.shutdown),
-          T.chain(T.foreach(({ res }) => T.to(res)(T.interrupt)))
-        )
-      )
-    )
+          requestQueue,
+          Queue.takeAll,
+          Effect.tap(() => pipe(requestQueue, Queue.shutdown)),
+          Effect.chain(
+            Effect.forEach(({ res }) => Effect.to(res)(Effect.interrupt)),
+          ),
+        ),
+      ),
+    ),
   );
 
   /**
@@ -53,12 +58,12 @@ export function lambda<R, I, O>(f: (a: I) => T.RIO<R, O>) {
    */
   function handler(event: I): Promise<O> {
     return pipe(
-      P.make<never, O>(),
-      T.tap((res) => requestQueue.offer({ event, res })),
-      T.chain(P.await),
-      T.sandbox,
-      T.mapError((cause) => pretty(cause, R.nodeTracer)),
-      R.runPromise
+      Promise.make<E, O>(),
+      Effect.tap((res) => pipe(requestQueue, Queue.offer({ event, res }))),
+      Effect.chain(Promise.await),
+      Effect.sandbox,
+      Effect.mapError((cause) => Cause.pretty(cause)),
+      Runtime.runPromise,
     );
   }
 

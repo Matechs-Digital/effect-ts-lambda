@@ -1,3 +1,3 @@
-import { enableTracing } from "@effect-ts/tracing-utils/Global";
+import { enableTracing } from "@effect-ts/core/Tracing";
 
 enableTracing();
